@@ -15,8 +15,8 @@
  *
  ******************************************************************************/
 
-#ifndef APP_H
-#define APP_H
+#ifndef SOCKET_SERVER_APP_H
+#define SOCKET_SERVER_APP_H
 
 /***************************************************************************/ /**
  * Initialize application.
