@@ -1,0 +1,56 @@
+# Silicon Labs Project Configuration Tools: slcp, v0, Component selection file.
+project_name: twt_remote_app_w320
+label: twt_remote_app_w320
+description: "Update To keep device in TWT mode \n"
+category: Example|Wi-Fi
+filter:
+- name: Project Difficulty
+  value: [Beginner]
+- name: Wireless Technology
+  value: [Wi-Fi]
+package: wifi
+quality: production
+readme:
+- {path: readme.md}
+source:
+- {path: app.c}
+- {path: main.c}
+include:
+- path: ''
+  file_list:
+  - {path: app.h}
+sdk: {id: gecko_sdk, version: 4.4.3}
+toolchain_settings:
+- {value: -Wall -Werror, option: gcc_compiler_option}
+component:
+- {from: wiseconnect3_sdk, id: SIWG917M111MGTBA}
+- {from: wiseconnect3_sdk, id: basic_network_config_manager}
+- {from: wiseconnect3_sdk, id: brd4338a}
+- {from: wiseconnect3_sdk, id: bsd_socket}
+- {from: wiseconnect3_sdk, id: network_manager}
+- {from: wiseconnect3_sdk, id: si917_memory_default_config}
+- {from: wiseconnect3_sdk, id: sl_si91x_asynchronous_socket}
+- {from: wiseconnect3_sdk, id: sl_si91x_internal_stack}
+- {from: wiseconnect3_sdk, id: sl_si91x_mem_pool_buffers_with_quota}
+- {from: wiseconnect3_sdk, id: syscalls}
+- {from: wiseconnect3_sdk, id: wifi}
+- {from: wiseconnect3_sdk, id: wifi_resources}
+- {from: wiseconnect3_sdk, id: wiseconnect3_common}
+- {id: brd4002a}
+- {id: freertos}
+- {id: sl_system}
+other_file:
+- {path: resources/readme/remoteapplicationprintssoc.png}
+- {path: resources/readme/twt_tcp_client_udp_client_soc_ncp.png}
+define:
+- {name: SL_SI91X_PRINT_DBG_LOG}
+configuration:
+- {name: SL_BOARD_ENABLE_VCOM, value: '1'}
+ui_hints:
+  highlight:
+  - {path: readme.md, focus: true}
+sdk_extension:
+- {id: wiseconnect3_sdk, version: 3.2.0}
+post_build: {path: ../../SDKs/gecko_sdk/extension/wiseconnect/utilities/postbuild_profile/wiseconnect_soc.slpb,
+  profile: wiseconnect_soc}
+
