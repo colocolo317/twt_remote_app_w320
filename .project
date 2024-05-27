@@ -764,6 +764,11 @@
 			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/cmsis_driver/EMAC.h</locationURI>
 		</link>
 		<link>
+			<name>wiseconnect3_sdk_3.2.0/components/device/silabs/si91x/mcu/drivers/cmsis_driver/GSPI.c</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/cmsis_driver/GSPI.c</locationURI>
+		</link>
+		<link>
 			<name>wiseconnect3_sdk_3.2.0/components/device/silabs/si91x/mcu/drivers/cmsis_driver/GSPI.h</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/cmsis_driver/GSPI.h</locationURI>
@@ -1354,6 +1359,11 @@
 			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_egpio.c</locationURI>
 		</link>
 		<link>
+			<name>wiseconnect3_sdk_3.2.0/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_gspi.c</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_gspi.c</locationURI>
+		</link>
+		<link>
 			<name>wiseconnect3_sdk_3.2.0/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_timers.c</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_timers.c</locationURI>
@@ -1572,6 +1582,26 @@
 			<name>wiseconnect3_sdk_3.2.0/components/device/silabs/si91x/mcu/drivers/systemlevel/src/rsi_wwdt.c</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/systemlevel/src/rsi_wwdt.c</locationURI>
+		</link>
+		<link>
+			<name>wiseconnect3_sdk_3.2.0/components/device/silabs/si91x/mcu/drivers/unified_api/inc/sl_si91x_dma.h</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/unified_api/inc/sl_si91x_dma.h</locationURI>
+		</link>
+		<link>
+			<name>wiseconnect3_sdk_3.2.0/components/device/silabs/si91x/mcu/drivers/unified_api/inc/sl_si91x_gspi.h</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/unified_api/inc/sl_si91x_gspi.h</locationURI>
+		</link>
+		<link>
+			<name>wiseconnect3_sdk_3.2.0/components/device/silabs/si91x/mcu/drivers/unified_api/src/sl_si91x_dma.c</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/unified_api/src/sl_si91x_dma.c</locationURI>
+		</link>
+		<link>
+			<name>wiseconnect3_sdk_3.2.0/components/device/silabs/si91x/mcu/drivers/unified_api/src/sl_si91x_gspi.c</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/unified_api/src/sl_si91x_gspi.c</locationURI>
 		</link>
 		<link>
 			<name>wiseconnect3_sdk_3.2.0/components/device/silabs/si91x/mcu/core/chip/src/iPMU_prog/iPMU_dotc/ipmu_apis.c</name>

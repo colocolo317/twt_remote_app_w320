@@ -2,8 +2,8 @@
 <project name="uc.module.setup.componentSetup.com.silabs.ss.framework.project.toolchain.core.default#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt:12.2.1.20221205.gcc" propertyScope="project">
   <folder name="resources">
     <folder name="readme">
-      <file name="remoteapplicationprintssoc.png" linked="false" uri="studio:/sdk/extension/wiseconnect/examples/snippets/wlan/twt_use_case_remote_app/resources/readme/remoteapplicationprintssoc.png"/>
-      <file name="twt_tcp_client_udp_client_soc_ncp.png" linked="false" uri="studio:/sdk/extension/wiseconnect/examples/snippets/wlan/twt_use_case_remote_app/resources/readme/twt_tcp_client_udp_client_soc_ncp.png"/>
+      <file name="remoteapplicationprintssoc.png" linked="false" uri="studio:/project/resources/readme/remoteapplicationprintssoc.png"/>
+      <file name="twt_tcp_client_udp_client_soc_ncp.png" linked="false" uri="studio:/project/resources/readme/twt_tcp_client_udp_client_soc_ncp.png"/>
     </folder>
   </folder>
   <folder name="wiseconnect3_sdk_3.2.0">
@@ -89,9 +89,10 @@
                   <folder name="config">
                     <file name="RTE_Device_917.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/cmsis_driver/config/RTE_Device_917.h"/>
                   </folder>
+                  <file name="GSPI.c" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/cmsis_driver/GSPI.c"/>
+                  <file name="GSPI.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/cmsis_driver/GSPI.h"/>
                   <file name="Driver_Common.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/cmsis_driver/Driver_Common.h"/>
                   <file name="EMAC.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/cmsis_driver/EMAC.h"/>
-                  <file name="GSPI.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/cmsis_driver/GSPI.h"/>
                   <file name="I2C.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/cmsis_driver/I2C.h"/>
                   <file name="MCI.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/cmsis_driver/MCI.h"/>
                   <file name="PHY_LAN8742A.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/cmsis_driver/PHY_LAN8742A.h"/>
@@ -130,6 +131,7 @@
                     <file name="clock_update.c" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/clock_update.c"/>
                     <file name="rsi_crc.c" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_crc.c"/>
                     <file name="rsi_egpio.c" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_egpio.c"/>
+                    <file name="rsi_gspi.c" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_gspi.c"/>
                     <file name="rsi_timers.c" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_timers.c"/>
                     <file name="rsi_udma.c" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_udma.c"/>
                     <file name="rsi_udma_wrapper.c" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_udma_wrapper.c"/>
@@ -139,6 +141,7 @@
                     <file name="clock_update.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/clock_update.h"/>
                     <file name="rsi_crc.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_crc.h"/>
                     <file name="rsi_egpio.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_egpio.h"/>
+                    <file name="rsi_gspi.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_gspi.h"/>
                     <file name="aux_reference_volt_config.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/aux_reference_volt_config.h"/>
                     <file name="rsi_adc.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_adc.h"/>
                     <file name="rsi_cci.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_cci.h"/>
@@ -150,7 +153,6 @@
                     <file name="rsi_enhanced_fim.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_enhanced_fim.h"/>
                     <file name="rsi_fim.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_fim.h"/>
                     <file name="rsi_gpdma.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_gpdma.h"/>
-                    <file name="rsi_gspi.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_gspi.h"/>
                     <file name="rsi_i2c.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_i2c.h"/>
                     <file name="rsi_i2s.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_i2s.h"/>
                     <file name="rsi_ir.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_ir.h"/>
@@ -176,6 +178,16 @@
                     <file name="rsi_vad.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_vad.h"/>
                     <file name="rsi_wurx.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/rsi_wurx.h"/>
                     <file name="sl_si91x_m4_ps.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc/sl_si91x_m4_ps.h"/>
+                  </folder>
+                </folder>
+                <folder name="unified_api">
+                  <folder name="src">
+                    <file name="sl_si91x_dma.c" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/unified_api/src/sl_si91x_dma.c"/>
+                    <file name="sl_si91x_gspi.c" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/unified_api/src/sl_si91x_gspi.c"/>
+                  </folder>
+                  <folder name="inc">
+                    <file name="sl_si91x_dma.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/unified_api/inc/sl_si91x_dma.h"/>
+                    <file name="sl_si91x_gspi.h" uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/unified_api/inc/sl_si91x_gspi.h"/>
                   </folder>
                 </folder>
                 <folder name="systemlevel">
@@ -558,10 +570,9 @@
       </folder>
     </folder>
   </folder>
-  <file name="app.c" linked="false" uri="studio:/sdk/extension/wiseconnect/examples/snippets/wlan/twt_use_case_remote_app/app.c"/>
-  <file name="main.c" linked="false" uri="studio:/sdk/extension/wiseconnect/examples/snippets/wlan/twt_use_case_remote_app/main.c"/>
-  <file name="app.h" linked="false" uri="studio:/sdk/extension/wiseconnect/examples/snippets/wlan/twt_use_case_remote_app/app.h"/>
-  <file name="readme.md" linked="false" uri="studio:/sdk/extension/wiseconnect/examples/snippets/wlan/twt_use_case_remote_app/readme.md"/>
+  <file name="main.c" linked="false" uri="studio:/project/main.c"/>
+  <file name="app.h" linked="false" uri="studio:/project/app.h"/>
+  <file name="readme.md" linked="false" uri="studio:/project/readme.md"/>
   <includePath uri="studio:/project/"/>
   <includePath uri="studio:/sdk/extension/wiseconnect/components/service/bsd_socket/si91x_socket"/>
   <includePath uri="studio:/sdk/extension/wiseconnect/components/service/bsd_socket/inc"/>
@@ -575,6 +586,7 @@
   <includePath uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/inc"/>
   <includePath uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/core/config"/>
   <includePath uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/core/common/inc"/>
+  <includePath uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/unified_api/inc"/>
   <includePath uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/wireless/asynchronous_socket/inc"/>
   <includePath uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/wireless/errno/inc"/>
   <includePath uri="studio:/sdk/extension/wiseconnect/components/device/silabs/si91x/wireless/icmp"/>
@@ -618,6 +630,11 @@
   <macroDefinition name="DEBUG_ENABLE" value="1"/>
   <macroDefinition name="DEBUG_UART" value="1"/>
   <macroDefinition name="ENABLE_DEBUG_MODULE" value="1"/>
+  <macroDefinition name="SL_SI91X_DMA"/>
+  <macroDefinition name="GSPI_CONFIG"/>
+  <macroDefinition name="GSPI_MULTI_SLAVE"/>
+  <macroDefinition name="SLI_SI91X_MCU_MOV_ROM_API_TO_FLASH"/>
+  <macroDefinition name="SL_SI91X_GSPI_DMA"/>
   <macroDefinition name="SLI_SI91X_OFFLOAD_NETWORK_STACK"/>
   <macroDefinition name="SI917"/>
   <macroDefinition name="SLI_SI91X_ENABLE_OS"/>

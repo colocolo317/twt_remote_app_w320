@@ -8,6 +8,9 @@
     <file name="sl_board_control.h" generated="true" linked="false"/>
     <file name="pin_config.h" generated="true" linked="false"/>
     <file name="sl_si91x_stack_size_config.h" generated="true" linked="false"/>
+    <file name="sl_si91x_dma_inst_config.h" generated="true" linked="false"/>
+    <file name="sl_si91x_gspi_config.h" generated="true" linked="false"/>
+    <file name="sl_si91x_gspi_common_config.h" generated="true" linked="false"/>
     <file name="emlib_core_debug_config.h" generated="true" linked="false"/>
   </folder>
   <includePath uri="studio:/project/config"/>

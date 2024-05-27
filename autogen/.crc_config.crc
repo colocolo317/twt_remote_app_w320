@@ -6,4 +6,7 @@ pin_config.h=45095913
 sl_board_configuration.h=-559764842
 sl_board_control.h=1349580067
 sl_net_default_values.h=-634351394
+sl_si91x_dma_inst_config.h=1665271787
+sl_si91x_gspi_common_config.h=-2051649747
+sl_si91x_gspi_config.h=1820103809
 sl_si91x_stack_size_config.h=1151736032
