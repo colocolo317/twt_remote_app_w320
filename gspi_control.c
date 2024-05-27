@@ -70,6 +70,7 @@ static void callback_event(uint32_t event);
  **************************   GLOBAL FUNCTIONS   *******************************
  ******************************************************************************/
 #if AMPAK_GSPI_TEST_TRANSFER
+/** Initial test buffer in ASCII 0x3B ~ 0x7A **/
 void init_test_buffer_text(void){
   for(uint32_t i = 0; i < GSPI_BUFFER_SIZE; i++){
     gspi_data_out[i] = DUMMY_TEXT_BASE + i % DUMMY_TEXT_BOUND;
@@ -213,7 +214,7 @@ void gspi_task(void* arguments)
   {
     while(osSemaphoreAcquire(gspi_transfer_complete_sem, 100) != osOK)
     {
-      osThreadYield();
+      continue;
     }
 
 #if AMPAK_GSPI_TEST_TRANSFER
