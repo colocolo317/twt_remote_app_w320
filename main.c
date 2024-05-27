@@ -14,6 +14,7 @@
  * sections of the MSLA applicable to Source Code.
  *
  ******************************************************************************/
+#include <stddef.h>
 #include <socket_server_app.h>
 #include "sl_component_catalog.h"
 #include "sl_system_init.h"
@@ -35,7 +36,7 @@ int main(void)
 
   // Initialize the application. For example, create periodic timer(s) or
   // task(s) if the kernel is present.
-  app_init();
+  socket_server_init(NULL);
 
 #if defined(SL_CATALOG_KERNEL_PRESENT)
   // Start the kernel. Task(s) created in app_init() will start running.

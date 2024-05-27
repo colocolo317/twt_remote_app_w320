@@ -46,6 +46,7 @@
 #include "sl_si91x_socket_utility.h"
 #include "sl_si91x_socket_constants.h"
 #include "sl_si91x_socket.h"
+#include <socket_server_app.h>
 
 #ifdef SLI_SI91X_MCU_INTERFACE
 #include "rsi_power_save.h"
@@ -54,6 +55,7 @@
 /******************************************************
  *                      Macros
  ******************************************************/
+#define NET_USE_STA 0
 
 /******************************************************
  *                    Constants
@@ -62,6 +64,7 @@
 #define BACK_LOG           1
 #define TCP_LISTENING_PORT 5001
 #define UDP_LISTENING_PORT 5002
+#define AP_VAP 1
 
 #if TCP_RECEIVE
 #define EXPECTED_DATA_SIZE (sizeof("Door lock opened") - 1)
@@ -69,13 +72,15 @@
 #define EXPECTED_DATA_SIZE 1470
 #endif
 #define RSI_MAX_TCP_RETRIES  10
-#define RECEIVE_DATA_TIMEOUT 20000 // command interval in milli seconds
+#define RECEIVE_DATA_TIMEOUT 2000 // command interval in milli seconds
 
-static const sl_wifi_device_configuration_t twt_client_configuration = {
+sl_mac_address_t ampak_mac = {{0x94, 0xB2, 0x16, 0x98, 0xD4, 0x2A}};
+
+static const sl_wifi_device_configuration_t sl_wifi_twt_concurrent_configuration = {
   .boot_option = LOAD_NWP_FW,
-  .mac_address = NULL,
+  .mac_address = &ampak_mac,
   .band        = SL_SI91X_WIFI_BAND_2_4GHZ,
-  .boot_config = { .oper_mode = SL_SI91X_CLIENT_MODE,
+  .boot_config = { .oper_mode = SL_SI91X_CONCURRENT_MODE,
                    .coex_mode = SL_SI91X_WLAN_ONLY_MODE,
                    .feature_bit_map =
                      (SL_SI91X_FEAT_SECURITY_OPEN | SL_SI91X_FEAT_AGGREGATION | SL_SI91X_FEAT_ULP_GPIO_BASED_HANDSHAKE
@@ -83,7 +88,7 @@ static const sl_wifi_device_configuration_t twt_client_configuration = {
                       | SL_SI91X_FEAT_WPS_DISABLE
 #endif
                       ),
-                   .tcp_ip_feature_bit_map     = (SL_SI91X_TCP_IP_FEAT_DHCPV4_CLIENT | SL_SI91X_TCP_IP_FEAT_DNS_CLIENT
+                   .tcp_ip_feature_bit_map     = (SL_SI91X_TCP_IP_FEAT_DHCPV4_SERVER | SL_SI91X_TCP_IP_FEAT_DHCPV4_CLIENT | SL_SI91X_TCP_IP_FEAT_DNS_CLIENT
                                               | SL_SI91X_TCP_IP_FEAT_EXTENSION_VALID),
                    .custom_feature_bit_map     = (SL_SI91X_CUSTOM_FEAT_EXTENTION_VALID),
                    .ext_custom_feature_bit_map = (SL_SI91X_EXT_FEAT_LOW_POWER_MODE | SL_SI91X_EXT_FEAT_XTAL_CLK
@@ -102,21 +107,28 @@ static const sl_wifi_device_configuration_t twt_client_configuration = {
 /******************************************************
  *               Variable Definitions
  ******************************************************/
-const osThreadAttr_t thread_attributes = {
-  .name       = "application_thread",
+const osThreadAttr_t socket_server_thread_attributes = {
+  .name       = "socket_server_thread",
   .attr_bits  = 0,
   .cb_mem     = 0,
   .cb_size    = 0,
   .stack_mem  = 0,
   .stack_size = 3072,
-  .priority   = 0,
+  .priority   = osPriorityNone,
   .tz_module  = 0,
   .reserved   = 0,
 };
 
 sl_ip_address_t ip_address           = { 0 };
-sl_net_wifi_client_profile_t profile = { 0 };
+
+#if NET_USE_STA
+sl_net_wifi_client_profile_t client_profile = { 0 };
+#else
+sl_net_wifi_ap_profile_t ap_profile = { 0 };
+#endif
+
 int tcp_server_socket = -1, tcp_client_socket = -1, udp_server_socket = -1;
+int server_socket;
 
 uint32_t start_rx = 0, start_rtt = 0, end_rtt = 0;
 volatile uint32_t num_pkts = 0;
@@ -125,11 +137,12 @@ volatile uint8_t data_sent                 = 0;
 volatile uint8_t data_recvd                = 0;
 volatile uint64_t num_bytes                = 0;
 volatile int8_t rxBuff[EXPECTED_DATA_SIZE] = { 0 };
+uint32_t reconnect = 0;
 
 /******************************************************
   *               Function Declarations
   ******************************************************/
-void application_start();
+void socket_server_task();
 sl_status_t create_tcp_server(void);
 sl_status_t create_udp_server(void);
 sl_status_t send_and_receive_data(void);
@@ -157,17 +170,27 @@ void data_callback(uint32_t sock_no, uint8_t *buffer, uint32_t length)
   }
 }
 
-void app_init(const void *unused)
+void socket_server_init(void* args)
 {
-  UNUSED_PARAMETER(unused);
-  osThreadNew((osThreadFunc_t)application_start, NULL, &thread_attributes);
+  UNUSED_PARAMETER(args);
+  osThreadNew((osThreadFunc_t)socket_server_task, args, &socket_server_thread_attributes);
 }
 
-void application_start()
+void socket_server_task(void* args)
 {
+  UNUSED_PARAMETER(args);
   sl_status_t status;
+  printf("\r\n");
+  printf("Set user-def MAC: %x:%x:%x:%x:%x:%x \r\n"
+        ,sl_wifi_twt_concurrent_configuration.mac_address->octet[0]
+        ,sl_wifi_twt_concurrent_configuration.mac_address->octet[1]
+        ,sl_wifi_twt_concurrent_configuration.mac_address->octet[2]
+        ,sl_wifi_twt_concurrent_configuration.mac_address->octet[3]
+        ,sl_wifi_twt_concurrent_configuration.mac_address->octet[4]
+        ,sl_wifi_twt_concurrent_configuration.mac_address->octet[5]);
 
-  status = sl_net_init(SL_NET_WIFI_CLIENT_INTERFACE, &twt_client_configuration, NULL, NULL);
+#if NET_USE_STA
+  status = sl_net_init(SL_NET_WIFI_CLIENT_INTERFACE, &sl_wifi_twt_concurrent_configuration, NULL, NULL);
   if (status != SL_STATUS_OK) {
     printf("Failed to start Wi-Fi client interface: 0x%lx\r\n", status);
     return;
@@ -179,9 +202,9 @@ void application_start()
     printf("Failed to bring Wi-Fi client interface up: 0x%lx\r\n", status);
     return;
   }
-  printf("Wi-Fi Client Connected\r\n");
+  printf("Wi-Fi client up\r\n");
 
-  status = sl_net_get_profile(SL_NET_WIFI_CLIENT_INTERFACE, SL_NET_DEFAULT_WIFI_CLIENT_PROFILE_ID, &profile);
+  status = sl_net_get_profile(SL_NET_WIFI_CLIENT_INTERFACE, SL_NET_DEFAULT_WIFI_CLIENT_PROFILE_ID, &client_profile);
   if (status != SL_STATUS_OK) {
     printf("Failed to get client profile: 0x%lx\r\n", status);
     return;
@@ -189,9 +212,66 @@ void application_start()
   printf("Success to get client profile\r\n");
 
   ip_address.type = SL_IPV4;
-  memcpy(&ip_address.ip.v4.bytes, &profile.ip.ip.v4.ip_address.bytes, sizeof(sl_ipv4_address_t));
+  memcpy(&ip_address.ip.v4.bytes, &client_profile.ip.ip.v4.ip_address.bytes, sizeof(sl_ipv4_address_t));
   print_sl_ip_address(&ip_address);
+  printf("\r\n");
 
+  sl_mac_address_t get_mac;
+  status = sl_wifi_get_mac_address(SL_WIFI_CLIENT_INTERFACE, &get_mac);
+  if (status != SL_STATUS_OK) {
+      printf("Failed to get ap MAC: 0x%lx\r\n", status);
+      return;
+    }
+  printf("Get user-def MAC: %x:%x:%x:%x:%x:%x \r\n"
+      ,get_mac.octet[0]
+      ,get_mac.octet[1]
+      ,get_mac.octet[2]
+      ,get_mac.octet[3]
+      ,get_mac.octet[4]
+      ,get_mac.octet[5]);
+#else
+  status = sl_net_init(SL_NET_WIFI_AP_INTERFACE, &sl_wifi_twt_concurrent_configuration, NULL, NULL);
+  if (status != SL_STATUS_OK) {
+    printf("Failed to start Wi-Fi ap interface: 0x%lx\r\n", status);
+    return;
+  }
+  printf("Wi-Fi Init Done\r\n");
+
+  status = sl_net_up(SL_NET_WIFI_AP_INTERFACE, 0);
+  if (status != SL_STATUS_OK) {
+    printf("Failed to bring Wi-Fi ap interface up: 0x%lx\r\n", status);
+    return;
+  }
+  printf("Wi-Fi ap up\r\n");
+
+  status = sl_net_get_profile(SL_NET_WIFI_AP_INTERFACE, SL_NET_DEFAULT_WIFI_AP_PROFILE_ID, &ap_profile);
+  if (status != SL_STATUS_OK) {
+    printf("Failed to get ap profile: 0x%lx\r\n", status);
+    return;
+  }
+  printf("Success to get ap profile\r\n");
+
+  ip_address.type = SL_IPV4;
+  memcpy(&ip_address.ip.v4.bytes, &ap_profile.ip.ip.v4.ip_address.bytes, sizeof(sl_ipv4_address_t));
+  print_sl_ip_address(&ip_address);
+  printf("\r\n");
+  sl_mac_address_t get_mac;
+  status = sl_wifi_get_mac_address(SL_WIFI_AP_INTERFACE, &get_mac);
+  if (status != SL_STATUS_OK) {
+      printf("Failed to get ap MAC: 0x%lx\r\n", status);
+      return;
+    }
+  printf("Get user-def MAC: %x:%x:%x:%x:%x:%x \r\n"
+      ,get_mac.octet[0]
+      ,get_mac.octet[1]
+      ,get_mac.octet[2]
+      ,get_mac.octet[3]
+      ,get_mac.octet[4]
+      ,get_mac.octet[5]);
+#endif
+
+
+Loop:
   status = create_tcp_server();
   if (status != SL_STATUS_OK) {
     printf("Error while creating TCP server: 0x%lx \r\n", status);
@@ -211,8 +291,10 @@ void application_start()
   status = send_and_receive_data();
   if (status != SL_STATUS_OK) {
     printf("Send and Receive Data fail: 0x%lx \r\n", status);
-    return;
+    //return;
   }
+
+goto Loop;
 }
 
 sl_status_t create_tcp_server(void)
@@ -222,52 +304,72 @@ sl_status_t create_tcp_server(void)
 
   int socket_return_value = 0;
 
-  tcp_server_socket = sl_si91x_socket_async(AF_INET, SOCK_STREAM, IPPROTO_TCP, &data_callback);
-  if (tcp_server_socket < 0) {
-    printf("TCP Socket creation failed with BSD error: %d\r\n", errno);
-    return SL_STATUS_FAIL;
-  }
-  printf("\r\nTCP Server Socket ID : %d\r\n", tcp_server_socket);
+#if !NET_USE_STA
+  uint8_t ap_vap = AP_VAP;
+#endif
 
-  socket_return_value = sl_si91x_setsockopt_async(tcp_server_socket,
-                                                  SOL_SOCKET,
-                                                  SL_SI91X_SO_MAXRETRY,
-                                                  &max_tcp_retry,
-                                                  sizeof(max_tcp_retry));
-  if (socket_return_value < 0) {
-    printf("TCP Set Socket option failed with BSD error: %d\r\n", errno);
-    close(tcp_server_socket);
-    return SL_STATUS_FAIL;
-  }
-  printf("TCP Set Sock Option: Max retry set : %d\r\n", max_tcp_retry);
+  if(reconnect == 0)
+  {
+    tcp_server_socket = sl_si91x_socket_async(AF_INET, SOCK_STREAM, IPPROTO_TCP, &data_callback);
+    if (tcp_server_socket < 0) {
+      printf("TCP Socket creation failed with BSD error: %d\r\n", errno);
+      return SL_STATUS_FAIL;
+    }
+    printf("\r\nTCP Server Socket ID : %d\r\n", tcp_server_socket);
+#if NET_USE_STA
+    socket_return_value = sl_si91x_setsockopt_async(tcp_server_socket,
+                                                    SOL_SOCKET,
+                                                    SL_SI91X_SO_MAXRETRY,
+                                                    &max_tcp_retry,
+                                                    sizeof(max_tcp_retry));
+#else
+    socket_return_value = sl_si91x_setsockopt_async(server_socket,
+                                                    SOL_SOCKET,
+                                                    SL_SI91X_SO_SOCK_VAP_ID,
+                                                    &ap_vap,
+                                                    sizeof(ap_vap));
+#endif
 
-  server_address.sin_family = AF_INET;
-  server_address.sin_port   = TCP_LISTENING_PORT;
+    if (socket_return_value < 0) {
+      printf("TCP Set Socket option failed with BSD error: %d\r\n", errno);
+      close(tcp_server_socket);
+      return SL_STATUS_FAIL;
+    }
+    printf("TCP Set Sock Option: Max retry set : %d\r\n", max_tcp_retry);
 
-  socket_return_value =
-    sl_si91x_bind(tcp_server_socket, (struct sockaddr *)&server_address, sizeof(struct sockaddr_in));
-  if (socket_return_value < 0) {
-    printf("TCP Socket bind failed with BSD error: %d\r\n", errno);
-    close(tcp_server_socket);
-    return SL_STATUS_FAIL;
-  }
-  printf("TCP Bind Success\r\n");
+    server_address.sin_family = AF_INET;
+    server_address.sin_port   = TCP_LISTENING_PORT;
 
-  socket_return_value = sl_si91x_listen(tcp_server_socket, BACK_LOG);
-  if (socket_return_value < 0) {
-    printf("TCP Socket listen failed with BSD error: %d\r\n", errno);
-    close(tcp_server_socket);
-    return SL_STATUS_FAIL;
-  }
-  printf("TCP Listening on Local Port : %d\r\n", TCP_LISTENING_PORT);
+    socket_return_value =
+        sl_si91x_bind(tcp_server_socket, (struct sockaddr *)&server_address, sizeof(struct sockaddr_in));
+    if (socket_return_value < 0) {
+      printf("TCP Socket bind failed with BSD error: %d\r\n", errno);
+      close(tcp_server_socket);
+      return SL_STATUS_FAIL;
+    }
+    printf("TCP Bind Success\r\n");
 
-  tcp_client_socket = sl_si91x_accept(tcp_server_socket, NULL, 0);
-  if (tcp_client_socket < 0) {
-    printf("Socket accept failed with BSD error: %d\r\n", errno);
-    close(tcp_server_socket);
-    return SL_STATUS_FAIL;
+    socket_return_value = sl_si91x_listen(tcp_server_socket, BACK_LOG);
+    if (socket_return_value < 0) {
+      printf("TCP Socket listen failed with BSD error: %d\r\n", errno);
+      close(tcp_server_socket);
+
+      //VERIFY_STATUS_AND_RETURN(socket_return_value);
+      return SL_STATUS_FAIL;
+    }
+    printf("TCP Listening on Local Port : %d\r\n", TCP_LISTENING_PORT);
   }
-  printf("TCP Socket Accept Success\r\n");
+  if(1 /*(reconnect == 1) || (reconnect == 0)*/)
+  {
+    tcp_client_socket = sl_si91x_accept(tcp_server_socket, NULL, 0);
+    if (tcp_client_socket < 0) {
+      printf("Socket accept failed with BSD error: %d\r\n", errno);
+      close(tcp_server_socket);
+      return SL_STATUS_FAIL;
+    }
+    printf("TCP Socket Accept Success\r\n");
+    return SL_STATUS_OK;
+  }
   printf("TCP Client Socket ID : %d\r\n", tcp_client_socket);
   return SL_STATUS_OK;
 }
@@ -288,7 +390,7 @@ sl_status_t create_udp_server(void)
   server_address.sin_port   = UDP_LISTENING_PORT;
 
   socket_return_value =
-    sl_si91x_bind(udp_server_socket, (struct sockaddr *)&server_address, sizeof(struct sockaddr_in));
+      sl_si91x_bind(udp_server_socket, (struct sockaddr *)&server_address, sizeof(struct sockaddr_in));
   if (socket_return_value < 0) {
     printf("UDP Socket bind failed with BSD error: %d\r\n", errno);
     close(udp_server_socket);
@@ -313,6 +415,7 @@ sl_status_t send_and_receive_data(void)
         data_sent = 0;
         sl_si91x_shutdown(tcp_client_socket, SHUTDOWN_BY_ID);
         printf("\r\nFailed to Send data to TCP Server, Error Code : 0x%x\r\n", status);
+        reconnect = 1;
         return SL_STATUS_FAIL;
       }
     }

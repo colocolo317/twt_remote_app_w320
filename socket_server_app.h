@@ -21,11 +21,11 @@
 /***************************************************************************/ /**
  * Initialize application.
  ******************************************************************************/
-void app_init(void);
+void socket_server_init(void* args);
 
 /***************************************************************************/ /**
  * App ticking function.
  ******************************************************************************/
-void app_process_action(void);
+void socket_server_task(void* args);
 
-#endif // APP_H
+#endif // SOCKET_SERVER_H
