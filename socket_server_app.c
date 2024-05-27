@@ -57,6 +57,11 @@
  ******************************************************/
 #define NET_USE_STA 0
 
+/** debug usage **/
+#define ON_SOCKET_APP_START 0
+#define ON_SOCKET_DATA_RECEIVE 1
+#define GSPI_RELEASE ON_SOCKET_APP_START
+
 /******************************************************
  *                    Constants
  ******************************************************/
@@ -107,6 +112,8 @@ static const sl_wifi_device_configuration_t sl_wifi_twt_concurrent_configuration
 /******************************************************
  *               Variable Definitions
  ******************************************************/
+extern osSemaphoreId_t gspi_thread_sem;
+
 const osThreadAttr_t socket_server_thread_attributes = {
   .name       = "socket_server_thread",
   .attr_bits  = 0,
@@ -159,6 +166,10 @@ void data_callback(uint32_t sock_no, uint8_t *buffer, uint32_t length)
   memcpy((void *)rxBuff, buffer, length);
   printf("Received %ld bytes\r\n", length);
   printf("\"");
+#if GSPI_RELEASE == ON_SOCKET_DATA_RECEIVE
+  osSemaphoreRelease(gspi_thread_sem);
+#endif
+
   for (i = 0; i < length; i++) {
     printf("%c", buffer[i]);
   }
@@ -179,6 +190,10 @@ void socket_server_init(void* args)
 void socket_server_task(void* args)
 {
   UNUSED_PARAMETER(args);
+
+#if GSPI_RELEASE == ON_SOCKET_APP_START
+  osSemaphoreRelease(gspi_thread_sem);
+#endif
   sl_status_t status;
   printf("\r\n");
   printf("Set user-def MAC: %x:%x:%x:%x:%x:%x \r\n"

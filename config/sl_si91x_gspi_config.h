@@ -45,7 +45,9 @@ extern "C" {
 //  <i> Enable: Peripheral configuration is taken straight from the configuration set in the universal configuration (UC).
 //  <i> Disable: If the application demands it to be modified during runtime, use the sl_si91x_gspi_set_configuration API to modify the peripheral configuration.
 //  <i> Default: 1
+#if 0
 #define GSPI_UC 1
+#endif
 
 // <o SL_GSPI_CLOCK_MODE> Mode
 //   <SL_GSPI_MODE_0=> Mode 0
