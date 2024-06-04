@@ -47,6 +47,7 @@
 #include "sl_si91x_socket_constants.h"
 #include "sl_si91x_socket.h"
 #include <socket_server_app.h>
+#include "sl_si91x_driver.h"
 
 #ifdef SLI_SI91X_MCU_INTERFACE
 #include "rsi_power_save.h"
@@ -74,7 +75,7 @@
 #define RSI_MAX_TCP_RETRIES  10
 #define RECEIVE_DATA_TIMEOUT 2000 // command interval in milli seconds
 
-sl_mac_address_t ampak_mac = {{0x94, 0xB2, 0x16, 0x98, 0xD4, 0x2A}};
+sl_mac_address_t ampak_mac = {{0x94, 0xB2, 0x16, 0x98, 0xD4, 0x21}};
 
 static const sl_wifi_device_configuration_t sl_wifi_twt_concurrent_configuration = {
   .boot_option = LOAD_NWP_FW,
@@ -179,15 +180,31 @@ void socket_server_init(void* args)
 void socket_server_task(void* args)
 {
   UNUSED_PARAMETER(args);
-  sl_status_t status;
+
   printf("\r\n");
-  printf("Set user-def MAC: %x:%x:%x:%x:%x:%x \r\n"
-        ,sl_wifi_twt_concurrent_configuration.mac_address->octet[0]
-        ,sl_wifi_twt_concurrent_configuration.mac_address->octet[1]
-        ,sl_wifi_twt_concurrent_configuration.mac_address->octet[2]
-        ,sl_wifi_twt_concurrent_configuration.mac_address->octet[3]
-        ,sl_wifi_twt_concurrent_configuration.mac_address->octet[4]
-        ,sl_wifi_twt_concurrent_configuration.mac_address->octet[5]);
+  sl_status_t status;
+
+  uint8_t flash_mac[6];
+  status = sl_si91x_driver_init(&sl_wifi_twt_concurrent_configuration, NULL);
+  printf("sl_si91x_driver_init: %s\r\n", status == SL_STATUS_OK ? "OK":"Failed");
+  status = sl_si91x_command_to_read_common_flash(0, 6, flash_mac);
+  printf("sl_si91x_command_to_read_common_flash: %s\r\n", status == SL_STATUS_OK ? "OK":"Failed");
+
+  if(status == SL_STATUS_OK)
+  {
+    printf("Flash read MAC: %x:%x:%x:%x:%x:%x \r\n"
+        ,flash_mac[0]
+        ,flash_mac[1]
+        ,flash_mac[2]
+        ,flash_mac[3]
+        ,flash_mac[4]
+        ,flash_mac[5]);
+    memcpy(ampak_mac.octet, flash_mac, 6);
+  }
+
+  status = sl_si91x_driver_deinit();
+  printf("sl_si91x_driver_deinit: %s\r\n", status == SL_STATUS_OK ? "OK":"Failed");
+
 
 #if NET_USE_STA
   status = sl_net_init(SL_NET_WIFI_CLIENT_INTERFACE, &sl_wifi_twt_concurrent_configuration, NULL, NULL);

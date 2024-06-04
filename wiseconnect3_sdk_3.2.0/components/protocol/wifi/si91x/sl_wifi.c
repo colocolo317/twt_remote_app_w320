@@ -700,9 +700,9 @@ sl_status_t sl_wifi_get_sta_tsf(sl_wifi_interface_t interface, sl_wifi_tsf64_t *
 sl_status_t sl_wifi_set_mac_address(sl_wifi_interface_t interface, const sl_mac_address_t *mac_address)
 {
   UNUSED_PARAMETER(interface);
-
+#if AMPAK_USE_DEFAULT_MAC
   SL_VERIFY_POINTER_OR_RETURN(mac_address, SL_STATUS_NULL_POINTER);
-
+#endif //AMPAK_USE_DEFAULT_MAC
   sl_status_t status = sl_si91x_driver_send_command(RSI_WLAN_REQ_SET_MAC_ADDRESS,
                                                     SI91X_WLAN_CMD_QUEUE,
                                                     mac_address,
