@@ -414,11 +414,6 @@
 			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/protocol/wifi/inc/sl_wifi_types.h</locationURI>
 		</link>
 		<link>
-			<name>wiseconnect3_sdk_3.2.0/components/protocol/wifi/si91x/sl_wifi.c</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/protocol/wifi/si91x/sl_wifi.c</locationURI>
-		</link>
-		<link>
 			<name>wiseconnect3_sdk_3.2.0/components/protocol/wifi/src/sl_wifi_callback_framework.c</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/protocol/wifi/src/sl_wifi_callback_framework.c</locationURI>
